@@ -1,41 +1,65 @@
 import datetime
+import os
 from flask import Flask, jsonify, request, abort
 from werkzeug.security import generate_password_hash, check_password_hash
-from jwt import jwt
+import jwt
 from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_postgre_user:A6ez4LlcojQ0NEdogSY9WfbyVgAviixL@dpg-cigefq5gkuvojj8rods0-a.oregon-postgres.render.com/ss_db_render_postgre"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = 'secret'
+
 db = SQLAlchemy(app)
 
 
 def encode_auth_token(user_id, user_email):
     try:
         payload = {
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=3600),
-            'iat:': datetime.datetime.utcnow(),
+            # 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=3600),
+            # 'iat:': datetime.datetime.utcnow(),
             'sub': user_id,
-            'email': user_email,
+            'email': user_email
         }
-        return jwt.encode(
-            payload,
-            app.config.get('JWT_SECRET'),
-            algorithm='HS256'
-        )
+        return jwt.encode(payload, app.config.get('JWT_SECRET_KEY'), algorithm='HS256')
     except Exception as e:
+        print(e, "<-----------------------")
         return e
 
 
 def decode_auth_token(auth_token):
     try:
-        payload = jwt.decode(auth_token, app.config.get('JWT_SECRET'))
+        payload = jwt.decode(auth_token, app.config.get(
+            'JWT_SECRET_KEY'), algorithms='HS256')
         return payload['sub']
     except jwt.ExpiredSignatureError:
         return 'Signature expired. Please log in again.'
     except jwt.InvalidTokenError:
         return 'Invalid token. Please log in again.'
+
+
+def authUser():
+    auth_header = request.headers.get("Authorization")
+    if auth_header:
+        auth_token = auth_header.split(" ")[1]
+    else:
+        return jsonify({"msg": "Token is missing"}), 403
+
+    user_id = decode_auth_token(auth_token)
+    if isinstance(user_id, str):
+        return jsonify({"msg": user_id}), 401
+
+    return user_id
+
+    # user = User.query.filter_by(id=user_id).first()
+    # if not user:
+    #     return jsonify({"msg": "User not found"}), 404
+
+    # if user.is_admin is False:
+    #     return jsonify({"msg": "You are not an Admin"}), 401
+
+    # return jsonify(msg='success!', user=user.serialize()), 200
 
 
 @app.route('/')
@@ -60,10 +84,12 @@ def signUp():
                    name=request.json["name"],
                    lastname=request.json["lastname"]
                    )
+
     db.session.add(newUser)
     db.session.commit()
 
-    return jsonify(newUser.serialize()), 200
+    auth_token = encode_auth_token(newUser.id, newUser.email)
+    return jsonify("token:", auth_token), 201
 
 
 @app.route("/login", methods=["POST"])
@@ -76,32 +102,34 @@ def login():
         return jsonify({"msg": "Bad username or password"}), 404
 
     if check_password_hash(user.password, data["password"]):
-        print("funcionaa!!!!")
         auth_token = encode_auth_token(user.id, user.email)
         return jsonify(auth_token=auth_token), 200
 
     else:
         return jsonify(message="Wrong credentials"), 401
 
+# crear endpoint to validate token
 
-# crear endpoint protected
-@app.route("/protected", methods=["GET"])
-def protected():
-    auth_header = request.headers.get("Authorization")
-    if auth_header:
-        auth_token = auth_header.split(" ")[1]
-    else:
-        return jsonify({"msg": "No token provided"}), 403
 
-    user_id = decode_auth_token(auth_token)
-    if isinstance(user_id, str):
-        return jsonify({"msg": user_id}), 401
+@app.route("/validate", methods=["POST"])
+def validate():
+    data = request.get_json()
+    token = data["token"]
 
-    user = User.query.filter_by(id=user_id).first()
-    if not user:
-        return jsonify({"msg": "User not found"}), 404
+    try:
+        payload = jwt.decode(token, app.config.get(
+            'JWT_SECRET_KEY'), algorithms=['HS256'])
+        user = User.query.filter_by(id=payload["sub"]).first()
 
-    return jsonify(msg='success!', user=user.serialize()), 200
+        if user:
+            return jsonify(valid=True, user=user.serialize()), 200
+        else:
+            return jsonify(valid=False, message="User not found"), 200
+
+    except jwt.ExpiredSignatureError:
+        return jsonify(valid=False, message="Signature expired. Please log in again."), 200
+    except jwt.InvalidTokenError:
+        return jsonify(valid=False, message="Invalid token. Please log in again."), 200
 
 
 @app.route('/user', methods=['GET'])
