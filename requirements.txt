@@ -1,6 +1,7 @@
 Flask
 Gunicorn
 flask-sqlalchemy
+flask-cors
 werkzeug
 jwt
 psycopg2-binary
