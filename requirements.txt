@@ -3,5 +3,5 @@ Gunicorn
 flask-sqlalchemy
 flask-cors
 werkzeug
-jwt
+pyjwt
 psycopg2-binary
