@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_postgre_user:A6ez4LlcojQ0NEdogSY9WfbyVgAviixL@dpg-cigefq5gkuvojj8rods0-a/ss_db_render_postgre"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_postgre_user:A6ez4LlcojQ0NEdogSY9WfbyVgAviixL@dpg-cigefq5gkuvojj8rods0-a.oregon-postgres.render.com/ss_db_render_postgre"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'secret'
 CORS(app)
@@ -40,27 +40,16 @@ def decode_auth_token(auth_token):
         return 'Invalid token. Please log in again.'
 
 
-def authUser():
-    auth_header = request.headers.get("Authorization")
-    if auth_header:
-        auth_token = auth_header.split(" ")[1]
-    else:
-        return jsonify({"msg": "Token is missing"}), 403
+# create funtion to validate token header
+# def validate_token():
+#     auth_header = request.headers.get("Authorization")
+#     if auth_header:
+#         auth_token = auth_header.split(" ")[1]
+#     else:
+#         return jsonify({"msg": "Token is missing"}), 403
 
-    user_id = decode_auth_token(auth_token)
-    if isinstance(user_id, str):
-        return jsonify({"msg": user_id}), 401
-
-    return user_id
-
-    # user = User.query.filter_by(id=user_id).first()
-    # if not user:
-    #     return jsonify({"msg": "User not found"}), 404
-
-    # if user.is_admin is False:
-    #     return jsonify({"msg": "You are not an Admin"}), 401
-
-    # return jsonify(msg='success!', user=user.serialize()), 200
+#     print("token valido")
+#     response = decode_auth_token(auth_token)
 
 
 @app.route('/')
@@ -109,8 +98,6 @@ def login():
     else:
         return jsonify(message="Wrong credentials"), 401
 
-# crear endpoint to validate token
-
 
 @app.route("/validate", methods=["POST"])
 def validate():
@@ -143,6 +130,16 @@ def get_users():
 @app.route('/user/<string:item_id>', methods=['GET'])
 def get_user(item_id):
 
+    auth_header = request.headers.get("Authorization")
+
+    if auth_header:
+        auth_token = auth_header.split(" ")[1]
+
+    else:
+        return jsonify({"msg": "Token is missing"}), 403
+
+    response = decode_auth_token(auth_token)
+
     user = User.query.get(item_id)
     if user is None:
         abort(404)
@@ -154,6 +151,15 @@ def get_canchas():
 
     canchas = Canchas.query.all()
     return jsonify([cancha.serialize() for cancha in canchas]), 200
+
+
+@app.route('/canchas/<string:item_id>', methods=['GET'])
+def get_cancha(item_id):
+
+    cancha = Canchas.query.get(item_id)
+    if cancha is None:
+        abort(404)
+    return jsonify(cancha.serialize()), 200
 
 
 @app.route('/canchas', methods=["POST"])
@@ -169,15 +175,6 @@ def create_canchas():
     db.session.add(cancha)
     db.session.commit()
 
-    return jsonify(cancha.serialize()), 200
-
-
-@app.route('/canchas/<string:item_id>', methods=['GET'])
-def get_cancha(item_id):
-
-    cancha = Canchas.query.get(item_id)
-    if cancha is None:
-        abort(404)
     return jsonify(cancha.serialize()), 200
 
 
