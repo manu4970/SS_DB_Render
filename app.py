@@ -212,8 +212,7 @@ class User(db.Model):
             "name": self.name,
             "lastname": self.lastname,
             "is_admin": self.is_admin,
-            "is_renter": self.is_renter,
-            "password": self.password
+            "is_renter": self.is_renter
         }
 
 
