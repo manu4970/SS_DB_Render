@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_postgre_user:A6ez4LlcojQ0NEdogSY9WfbyVgAviixL@dpg-cigefq5gkuvojj8rods0-a/ss_db_render_postgre"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'secret'
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app)
 db = SQLAlchemy(app)
 
 
