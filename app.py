@@ -1,7 +1,5 @@
-import os
 import datetime
-from flask import Flask, jsonify, request, abort, Blueprint
-# from models import db, User, Canchas, Rentas
+from flask import Flask, jsonify, request, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from jwt import jwt
 from flask_sqlalchemy import SQLAlchemy
