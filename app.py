@@ -4,13 +4,14 @@ from flask import Flask, jsonify, request, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_postgre_user:A6ez4LlcojQ0NEdogSY9WfbyVgAviixL@dpg-cigefq5gkuvojj8rods0-a.oregon-postgres.render.com/ss_db_render_postgre"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'secret'
-
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 db = SQLAlchemy(app)
 
 
