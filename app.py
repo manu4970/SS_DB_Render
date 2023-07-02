@@ -228,7 +228,10 @@ class Canchas(db.Model):
         return {
             "id": self.id,
             "location": self.location,
-            "name": self.name
+            "name": self.name,
+            "sportType": self.sportType,
+            "cantidad": self.cantidad,
+            "user_id": self.user_id
         }
 
 
