@@ -93,7 +93,7 @@ def login():
 
     if check_password_hash(user.password, data["password"]):
         auth_token = encode_auth_token(user.id, user.email)
-        return jsonify(auth_token=auth_token), 200
+        return jsonify({"auth_token": auth_token, "id": user.id}), 200
 
     else:
         return jsonify(message="Wrong credentials"), 401
