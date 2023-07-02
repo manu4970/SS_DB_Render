@@ -3,3 +3,4 @@ Gunicorn
 flask-sqlalchemy
 werkzeug
 jwt
+psycopg2-binary
