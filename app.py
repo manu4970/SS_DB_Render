@@ -38,6 +38,11 @@ def decode_auth_token(auth_token):
         return 'Invalid token. Please log in again.'
 
 
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
+
 @app.route('/signup', methods=['POST'])
 def signUp():
 
