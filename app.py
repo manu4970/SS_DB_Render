@@ -231,7 +231,8 @@ class Canchas(db.Model):
             "name": self.name,
             "sportType": self.sportType,
             "cantidad": self.cantidad,
-            "user_id": self.user_id
+            "user_id": self.user_id,
+            "user": self.user.serialize()
         }
 
 
