@@ -40,18 +40,6 @@ def decode_auth_token(auth_token):
         return 'Invalid token. Please log in again.'
 
 
-# create funtion to validate token header
-# def validate_token():
-#     auth_header = request.headers.get("Authorization")
-#     if auth_header:
-#         auth_token = auth_header.split(" ")[1]
-#     else:
-#         return jsonify({"msg": "Token is missing"}), 403
-
-#     print("token valido")
-#     response = decode_auth_token(auth_token)
-
-
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
@@ -197,6 +185,7 @@ class User(db.Model):
     name = db.Column(db.String(120), nullable=True)
     lastname = db.Column(db.String(120), nullable=True)
     password = db.Column(db.String(500), nullable=True)
+    img = db.Column(db.String(500), nullable=True)
     is_admin = db.Column(db.Boolean, nullable=True)
     is_renter = db.Column(db.Boolean, nullable=True)
     rentas = db.relationship(

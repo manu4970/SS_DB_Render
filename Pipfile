@@ -11,8 +11,20 @@ werkzeug = "*"
 pyjwt = "*"
 psycopg2-binary = "*"
 flask-cors= "*"
+python-dotenv= "*"
+flask-migrate = "*"
+sqlalchemy = "*"
+alembic = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.10"
+
+[scripts]
+start="flask run -p 3001 -h 0.0.0.0"
+init="flask db init"
+migrate="flask db migrate"
+local="heroku local"
+upgrade="flask db upgrade"
+reset_db="bash ./docs/assets/reset_migrations.bash"

@@ -5,3 +5,8 @@ flask-cors
 werkzeug
 pyjwt
 psycopg2-binary
+python-dotenv
+flask-migrate
+alembic
+sqlalchemy
+psycopg2-binary
