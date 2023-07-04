@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_user:8NNClcUA3RHGqH1Rz5a96xHZgkJtohf4@dpg-ciia4l59aq012eqiknf0-a.oregon-postgres.render.com/ss_db_render"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_z7p6_user:FZ2JJFplsMyFnMH9h0fKTZ1y93Vl9iZ3@dpg-ciiaqudph6erq6nlvsi0-a.oregon-postgres.render.com/ss_db_render_z7p6r"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'secret'
 CORS(app)
@@ -157,7 +157,9 @@ def create_canchas():
                      location=request.json["location"],
                      user_id=request.json["user_id"],
                      sportType=request.json["sportType"],
-                     cantidad=request.json["cantidad"]
+                     cantidad=request.json["cantidad"],
+                     detalle=request.json["detalle"],
+                     is_available=request.json["is_available"]
                      )
     print(cancha)
     db.session.add(cancha)
@@ -168,13 +170,12 @@ def create_canchas():
 
 @app.route('/rentas', methods=['POST'])
 def create_rentas():
-    newRentas = Rentas(disponibility=request.json["disponibility"],
-                       is_available=request.json["is_available"],
-                       cacha_id=request.json["cacha_id"],
-                       date=request.json["date_start"],
+    newRentas = Rentas(
+                       date=request.json["date"],
                        time=request.json["time"],
+                       cantidad=request.json["cantidad"],
                        user_id=request.json["user_id"],
-                       counter=request.json["counter"]
+                       cancha_id=request.json["cancha_id"]
                        )
 
     db.session.add(newRentas)
@@ -222,17 +223,19 @@ class User(db.Model):
             "name": self.name,
             "lastname": self.lastname,
             "is_admin": self.is_admin,
-            "is_renter": self.is_renter
+            "is_renter": self.is_renter,
+            "img" : self.img
         }
 
 
 class Canchas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    location = db.Column(db.String, nullable=False)
-    name = db.Column(db.String(120), nullable=False)
+    location = db.Column(db.String, nullable=True)
+    name = db.Column(db.String(120), nullable=True)
+    is_available = db.Column(db.Boolean, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    sportType = db.Column(db.String, nullable=False)
-    cantidad = db.Column(db.Integer, nullable=False)
+    sportType = db.Column(db.String, nullable=True)
+    cantidad = db.Column(db.Integer, nullable=True)
     detalle = db.Column(db.String, nullable=True)
     user = db.relationship('User', backref='canchas')
     rentas = db.relationship(
@@ -246,15 +249,16 @@ class Canchas(db.Model):
             "sportType": self.sportType,
             "cantidad": self.cantidad,
             "detalle": self.detalle,
+            "is_available": self.is_available,
             "user_id": self.user_id
         }
 
 
 class Rentas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    disponibility = db.Column(db.DateTime, nullable=False)
-    is_available = db.Column(db.Boolean, nullable=False)
-    counter = db.Column(db.Boolean, nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
+    time = db.Column(db.String, nullable=False)
+    cantidad = db.Column(db.Boolean, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     cancha_id = db.Column(db.Integer, db.ForeignKey(
         'canchas.id'), nullable=False)
@@ -266,9 +270,9 @@ class Rentas(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "disponibility": self.disponibility,
-            "is_available": self.is_available,
-            "counter": self.counter,
+            "date": self.date,
+            "time": self.time,
+            "cantidad": self.cantidad,
             "user_id": self.user_id,
             "cancha_id": self.cancha_id,
             "users": [user.serialize() for user in self.users],
