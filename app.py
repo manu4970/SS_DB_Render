@@ -166,6 +166,30 @@ def create_canchas():
     return jsonify(cancha.serialize()), 200
 
 
+@app.route('/rentas', methods=['POST'])
+def create_rentas():
+    newRentas = Rentas(disponibility=request.json["disponibility"],
+                       is_available=request.json["is_available"],
+                       cacha_id=request.json["cacha_id"],
+                       date=request.json["date_start"],
+                       time=request.json["time"],
+                       user_id=request.json["user_id"],
+                       counter=request.json["counter"]
+                       )
+
+    db.session.add(newRentas)
+    db.session.commit()
+
+    return jsonify(newRentas.serialize()), 200
+
+
+@app.route('/rentas', methods=['GET'])
+def get_rentas():
+
+    rentas = Rentas.query.all()
+    return jsonify([rentas.serialize() for renta in rentas]), 200
+
+
 rentas_user = db.Table(
     "rentas_user",
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
@@ -209,6 +233,7 @@ class Canchas(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     sportType = db.Column(db.String, nullable=False)
     cantidad = db.Column(db.Integer, nullable=False)
+    detalle = db.Column(db.String, nullable=True)
     user = db.relationship('User', backref='canchas')
     rentas = db.relationship(
         'Rentas', secondary=canchas_rentas, back_populates='canchas')
@@ -220,6 +245,7 @@ class Canchas(db.Model):
             "name": self.name,
             "sportType": self.sportType,
             "cantidad": self.cantidad,
+            "detalle": self.detalle,
             "user_id": self.user_id
         }
 
@@ -229,6 +255,9 @@ class Rentas(db.Model):
     disponibility = db.Column(db.DateTime, nullable=False)
     is_available = db.Column(db.Boolean, nullable=False)
     counter = db.Column(db.Boolean, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    cancha_id = db.Column(db.Integer, db.ForeignKey(
+        'canchas.id'), nullable=False)
     users = db.relationship(
         'User', secondary=rentas_user, back_populates='rentas')
     canchas = db.relationship(
@@ -239,7 +268,11 @@ class Rentas(db.Model):
             "id": self.id,
             "disponibility": self.disponibility,
             "is_available": self.is_available,
-            "counter": self.counter
+            "counter": self.counter,
+            "user_id": self.user_id,
+            "cancha_id": self.cancha_id,
+            "users": [user.serialize() for user in self.users],
+            "canchas": [cancha.serialize() for cancha in self.canchas]
         }
 
 
