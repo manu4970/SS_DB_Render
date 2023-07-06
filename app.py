@@ -213,8 +213,10 @@ class User(db.Model):
     img = db.Column(db.String(500), nullable=True)
     is_admin = db.Column(db.Boolean, nullable=True)
     is_renter = db.Column(db.Boolean, nullable=True)
-    rentas = db.relationship(
-        'Rentas', secondary=rentas_user, back_populates='users')
+    canchas_id = db.Column(db.Integer, db.ForeignKey('canchas.id'), nullable=False)
+    rentas = db.relationship('Rentas', secondary=rentas_user, back_populates='users'),
+    canchas = db.relationship('Canchas', backref='user')
+
 
     def serialize(self):
         return {
@@ -224,19 +226,24 @@ class User(db.Model):
             "lastname": self.lastname,
             "is_admin": self.is_admin,
             "is_renter": self.is_renter,
-            "img" : self.img
+            "img" : self.img,
+            "rentas": [renta.serialize() for renta in self.rentas],
+            "canchas": [cancha.serialize() for cancha in self.canchas],
         }
 
 
 class Canchas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     location = db.Column(db.String, nullable=True)
+    region = db.Column(db.String, nullable=True)
+    comuna = db.Column(db.String, nullable=True)
     name = db.Column(db.String(120), nullable=True)
     is_available = db.Column(db.Boolean, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     sportType = db.Column(db.String, nullable=True)
-    cantidad = db.Column(db.Integer, nullable=True)
+    cantidadCanchas = db.Column(db.Integer, nullable=True)
     detalle = db.Column(db.String, nullable=True)
+    precio = db.Column(db.Integer, nullable=True)
     user = db.relationship('User', backref='canchas')
     rentas = db.relationship(
         'Rentas', secondary=canchas_rentas, back_populates='canchas')
@@ -245,20 +252,27 @@ class Canchas(db.Model):
         return {
             "id": self.id,
             "location": self.location,
+            "region": self.region,
+            "comuna": self.comuna,
             "name": self.name,
             "sportType": self.sportType,
-            "cantidad": self.cantidad,
+            "cantidad": self.cantidadCanchas,
             "detalle": self.detalle,
             "is_available": self.is_available,
-            "user_id": self.user_id
+            "user_id": self.user_id,
+            "user": self.user.serialize(),
+            "rentas": [renta.serialize() for renta in self.rentas],
+
+
         }
 
 
 class Rentas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    dateTime = db.Column(db.DateTime, nullable=False)
+    time = db.Column(db.DateTime, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
-    time = db.Column(db.String, nullable=False)
-    cantidad = db.Column(db.Boolean, nullable=False)
+    contadorArriendo = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     cancha_id = db.Column(db.Integer, db.ForeignKey(
         'canchas.id'), nullable=False)
@@ -272,11 +286,12 @@ class Rentas(db.Model):
             "id": self.id,
             "date": self.date,
             "time": self.time,
-            "cantidad": self.cantidad,
+            "cantidad": self.contadorArriendo,
             "user_id": self.user_id,
             "cancha_id": self.cancha_id,
             "users": [user.serialize() for user in self.users],
-            "canchas": [cancha.serialize() for cancha in self.canchas]
+            "canchas": [cancha.serialize() for cancha in self.canchas],
+            "dateTime": self.dateTime,
         }
 
 
