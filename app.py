@@ -55,8 +55,8 @@ def signUp():
 
     if user:
         return jsonify({"msg": "User already exists"}), 401
-    if user.password == "":
-        return jsonify({"msg": "Password is empty"}), 401
+    # if user.password == "":
+    #     return jsonify({"msg": "Password is empty"}), 401
 
 
     hashed_password = generate_password_hash(data["password"], method='sha256')
