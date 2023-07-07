@@ -113,6 +113,8 @@ def get_users():
 
     
     users = User.query.all()
+    if users is None:
+        return jsonify({"msg": "User not found"}), 404
 
 
     return jsonify([user.serialize() for user in users]), 200
