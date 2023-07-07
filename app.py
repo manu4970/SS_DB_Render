@@ -214,12 +214,12 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=True)
     name = db.Column(db.String(120), nullable=True)
     lastname = db.Column(db.String(120), nullable=True)
-    password = db.Column(db.String(500), nullable=True)
+    # password = db.Column(db.String(500), nullable=True)
     img = db.Column(db.String(500), nullable=True)
     is_admin = db.Column(db.Boolean, nullable=True)
     is_renter = db.Column(db.Boolean, nullable=True)
     canchas_id = db.Column(db.Integer, db.ForeignKey('canchas.id'), nullable=False)
-    rentas = db.relationship('Rentas', secondary=rentas_user, back_populates='users'),
+    rentas = db.relationship('Rentas', secondary=rentas_user, back_populates='users')
     canchas = db.relationship('Canchas', backref='user')
 
 
@@ -288,8 +288,8 @@ class Rentas(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "time": self.time,
             "date": self.date,
+            "time": self.time,
             "start_time": self.start_time,
             "end_time": self.end_time,
             "cantidad": self.contadorArriendo,
@@ -298,7 +298,6 @@ class Rentas(db.Model):
             "users": [user.serialize() for user in self.users],
             "canchas": [cancha.serialize() for cancha in self.canchas],
         }
-
 
 if __name__ == '__main__':
     app.run(debug=True)
