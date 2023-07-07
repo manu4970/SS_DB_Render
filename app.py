@@ -220,9 +220,8 @@ class User(db.Model):
     img = db.Column(db.String(500), nullable=True)
     is_admin = db.Column(db.Boolean, nullable=True)
     is_renter = db.Column(db.Boolean, nullable=True)
-    canchas_id = db.Column(db.Integer, db.ForeignKey('canchas.id'), nullable=False)
-    rentas = db.relationship('Rentas', secondary=rentas_user, back_populates='users')
-    canchas = db.relationship('Canchas', backref='user')
+    canchas = db.relationship('Canchas', backref='user', lazy=True)
+    rentas = db.relationship('Rentas', secondary=rentas_user, backref='user')
 
 
     def serialize(self):
@@ -246,14 +245,12 @@ class Canchas(db.Model):
     comuna = db.Column(db.String, nullable=True)
     name = db.Column(db.String(120), nullable=True)
     is_available = db.Column(db.Boolean, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     sportType = db.Column(db.String, nullable=True)
     cantidadCanchas = db.Column(db.Integer, nullable=True)
     detalle = db.Column(db.String, nullable=True)
     precio = db.Column(db.Integer, nullable=True)
-    user = db.relationship('User', backref='canchas')
-    rentas = db.relationship(
-        'Rentas', secondary=canchas_rentas, back_populates='canchas')
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    rentas = db.relationship('Rentas', secondary=canchas_rentas, backref='canchas')
 
     def serialize(self):
         return {
@@ -280,12 +277,7 @@ class Rentas(db.Model):
     end_time = db.Column(db.DateTime, nullable=True)
     contadorArriendo = db.Column(db.Integer, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    cancha_id = db.Column(db.Integer, db.ForeignKey(
-        'canchas.id'), nullable=False)
-    users = db.relationship(
-        'User', secondary=rentas_user, back_populates='rentas')
-    canchas = db.relationship(
-        'Canchas', secondary=canchas_rentas, back_populates='rentas')
+    cancha_id = db.Column(db.Integer, db.ForeignKey('canchas.id'), nullable=False)
 
     def serialize(self):
         return {
@@ -297,8 +289,8 @@ class Rentas(db.Model):
             "cantidad": self.contadorArriendo,
             "user_id": self.user_id,
             "cancha_id": self.cancha_id,
-            "users": [user.serialize() for user in self.users],
-            "canchas": [cancha.serialize() for cancha in self.canchas],
+            "user": self.user.serialize(),
+            "cancha": self.cancha.serialize(),
         }
 
 if __name__ == '__main__':
