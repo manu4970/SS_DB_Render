@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_jg3d_user:Sd6xCFRCqCmYYC4wgoo9ssphaMtOLPaM@dpg-cik2rh5gkuvjvn0ucudg-a.oregon-postgres.render.com/ss_db_render_jg3d"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_l4ug_user:9JELSNmbRM9mgJh7xG3ahGXNMLZDl31Y@dpg-cik4luenqql0l1vp7vh0-a.oregon-postgres.render.com/ss_db_render_l4ug"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'secret'
 CORS(app)
