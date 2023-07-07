@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_bjqm_user:QUzbNI0BG3Y6AsXbS8Ytym9YBiMHdurD@dpg-cij0m6dgkuvhnnatj58g-a.oregon-postgres.render.com/ss_db_render_bjqm"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_jg3d_user:Sd6xCFRCqCmYYC4wgoo9ssphaMtOLPaM@dpg-cik2rh5gkuvjvn0ucudg-a.oregon-postgres.render.com/ss_db_render_jg3d"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'secret'
 CORS(app)
@@ -111,8 +111,13 @@ def validate():
 @app.route('/user', methods=['GET'])
 def get_users():
 
+    
     users = User.query.all()
+
+
     return jsonify([user.serialize() for user in users]), 200
+    
+
 
 
 @app.route('/user/<string:item_id>', methods=['GET'])
@@ -262,17 +267,16 @@ class Canchas(db.Model):
             "user_id": self.user_id,
             "user": self.user.serialize(),
             "rentas": [renta.serialize() for renta in self.rentas],
-
-
         }
 
 
 class Rentas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    dateTime = db.Column(db.DateTime, nullable=False)
-    time = db.Column(db.DateTime, nullable=False)
-    date = db.Column(db.DateTime, nullable=False)
-    contadorArriendo = db.Column(db.Integer, nullable=False)
+    time = db.Column(db.DateTime, nullable=True)
+    date = db.Column(db.DateTime, nullable=True)
+    start_time = db.Column(db.DateTime, nullable=True)
+    end_time = db.Column(db.DateTime, nullable=True)
+    contadorArriendo = db.Column(db.Integer, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     cancha_id = db.Column(db.Integer, db.ForeignKey(
         'canchas.id'), nullable=False)
