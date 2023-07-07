@@ -288,14 +288,15 @@ class Rentas(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "date": self.date,
             "time": self.time,
+            "date": self.date,
+            "start_time": self.start_time,
+            "end_time": self.end_time,
             "cantidad": self.contadorArriendo,
             "user_id": self.user_id,
             "cancha_id": self.cancha_id,
             "users": [user.serialize() for user in self.users],
             "canchas": [cancha.serialize() for cancha in self.canchas],
-            "dateTime": self.dateTime,
         }
 
 
