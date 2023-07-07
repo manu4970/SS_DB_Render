@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_l4ug_user:9JELSNmbRM9mgJh7xG3ahGXNMLZDl31Y@dpg-cik4luenqql0l1vp7vh0-a.oregon-postgres.render.com/ss_db_render_l4ug"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_gxpf_user:nsfkeEphwJGWIpaZevpZOlL1CPpYpDYv@dpg-cik8f3lgkuvhi1cnllb0-a.oregon-postgres.render.com/ss_db_render_gxpf"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'secret'
 CORS(app)
@@ -216,7 +216,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=True)
     name = db.Column(db.String(120), nullable=True)
     lastname = db.Column(db.String(120), nullable=True)
-    # password = db.Column(db.String(500), nullable=True)
+    password = db.Column(db.String(500), nullable=True)
     img = db.Column(db.String(500), nullable=True)
     is_admin = db.Column(db.Boolean, nullable=True)
     is_renter = db.Column(db.Boolean, nullable=True)
