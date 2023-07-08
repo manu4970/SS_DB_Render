@@ -53,11 +53,11 @@ def signUp():
     user = User.query.filter_by(email=data["email"]).first()
 
     if user:
-        return jsonify({"msg": "User already exists"}), 401
-    if not data.get("password") and not data.get("email") and not data.get("name") and not data.get("lastname"):
-        return jsonify({"msg": "You are missing data"}), 401
+        return jsonify({"error": "User already exists"}), 401
+    if not data.get("password") or not data.get("email") or not data.get("name") or not data.get("lastname"):
+        return jsonify({"error": "Incomplete data provided"}), 401
     if not re.match(r"[^@]+@[^@]+\.[^@]+", data["email"]):
-        return jsonify({"msg": "Invalid email format"}), 401
+        return jsonify({"error": "Invalid email format"}), 401
 
 
     hashed_password = generate_password_hash(data["password"], method='sha256')
