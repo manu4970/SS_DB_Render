@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 from flask import Flask, jsonify, request, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -25,7 +26,6 @@ def encode_auth_token(user_id, user_email):
         }
         return jwt.encode(payload, app.config.get('JWT_SECRET_KEY'), algorithm='HS256')
     except Exception as e:
-        print(e, "<-----------------------")
         return e
 
 
@@ -51,12 +51,13 @@ def signUp():
     data = request.get_json()
 
     user = User.query.filter_by(email=data["email"]).first()
-    print(user,data)
 
     if user:
         return jsonify({"msg": "User already exists"}), 401
-    # if user.password == "":
-    #     return jsonify({"msg": "Password is empty"}), 401
+    if not data.get("password") and not data.get("email") and not data.get("name") and not data.get("lastname"):
+        return jsonify({"msg": "Password is empty"}), 401
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", data["email"]):
+        return jsonify({"msg": "Invalid email format"}), 401
 
 
     hashed_password = generate_password_hash(data["password"], method='sha256')
