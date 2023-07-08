@@ -55,7 +55,7 @@ def signUp():
     if user:
         return jsonify({"msg": "User already exists"}), 401
     if not data.get("password") and not data.get("email") and not data.get("name") and not data.get("lastname"):
-        return jsonify({"msg": "Password is empty"}), 401
+        return jsonify({"msg": "You are missing data"}), 401
     if not re.match(r"[^@]+@[^@]+\.[^@]+", data["email"]):
         return jsonify({"msg": "Invalid email format"}), 401
 
