@@ -165,13 +165,18 @@ def get_cancha(item_id):
 @app.route('/canchas', methods=["POST"])
 def create_canchas():
     print(request.json)
-    cancha = Canchas(name=request.json["name"],
+    cancha = Canchas(
                      location=request.json["location"],
-                     user_id=request.json["user_id"],
+                     region=request.json["region"],
+                     comuna=request.json["comuna"],
+                     name=request.json["name"],
+                     is_available=request.json["is_available"],
                      sportType=request.json["sportType"],
-                     cantidad=request.json["cantidad"],
+                     cantidadCanchas=request.json["cantidadCanchas"],
                      detalle=request.json["detalle"],
-                     is_available=request.json["is_available"]
+                     precio=request.json["precio"],
+                     user_id=request.json["user_id"],
+                     rentas=request.json["rentas"]
                      )
     print(cancha)
     db.session.add(cancha)
