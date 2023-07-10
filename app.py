@@ -175,8 +175,8 @@ def create_canchas():
                      cantidadCanchas=request.json["cantidadCanchas"],
                      detalle=request.json["detalle"],
                      precio=request.json["precio"],
-                     user_id=request.json["user_id"]
-                    #  rentas=request.json["rentas"]
+                     user_id=request.json["user_id"],
+                     rentas=request.json["rentas"]
                      )
     print(cancha)
     db.session.add(cancha)
