@@ -169,6 +169,8 @@ def create_canchas():
                      region=request.json["region"],
                      comuna=request.json["comuna"],
                      name=request.json["name"],
+                     apertura=request.json["apertura"],
+                     cierre=request.json["cierre"],
                      is_available=request.json["is_available"],
                      sportType=request.json["sportType"],
                      cantidadCanchas=request.json["cantidadCanchas"],
