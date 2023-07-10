@@ -164,7 +164,6 @@ def get_cancha(item_id):
 
 @app.route('/canchas', methods=["POST"])
 def create_canchas():
-    print(request.json)
     cancha = Canchas(
                      location=request.json["location"],
                      region=request.json["region"],
@@ -176,7 +175,7 @@ def create_canchas():
                      detalle=request.json["detalle"],
                      precio=request.json["precio"],
                      user_id=request.json["user_id"],
-                     rentas=request.json["rentas"]
+                    #  rentas=request.json["rentas"]
                      )
     print(cancha)
     db.session.add(cancha)
