@@ -217,8 +217,8 @@ rentas_user = db.Table(
 
 canchas_rentas = db.Table(
     "canchas_rentas",
-    db.Column('rentas_id', db.Integer, db.ForeignKey('canchas.id')),
-    db.Column('canchas_id', db.Integer, db.ForeignKey('rentas.id'))
+    db.Column('rentas_id', db.Integer, db.ForeignKey('rentas.id')),
+    db.Column('canchas_id', db.Integer, db.ForeignKey('canchas.id'))
 )
 
 
@@ -257,6 +257,8 @@ class Canchas(db.Model):
     name = db.Column(db.String(120), nullable=True)
     is_available = db.Column(db.Boolean, nullable=False)
     sportType = db.Column(db.String, nullable=True)
+    apertura = db.Column(db.DateTime, nullable=True)
+    cierre = db.Column(db.DateTime, nullable=True)
     cantidadCanchas = db.Column(db.Integer, nullable=True)
     detalle = db.Column(db.String, nullable=True)
     precio = db.Column(db.Integer, nullable=True)
@@ -270,6 +272,8 @@ class Canchas(db.Model):
             "region": self.region,
             "comuna": self.comuna,
             "name": self.name,
+            "apertura": self.apertura,
+            "cierre": self.cierre,
             "sportType": self.sportType,
             "cantidad": self.cantidadCanchas,
             "detalle": self.detalle,
