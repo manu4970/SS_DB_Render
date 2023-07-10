@@ -191,8 +191,6 @@ def create_rentas():
     newRentas = Rentas(
                        time=request.json["time"],
                        date=request.json["date"],
-                       start_time=request.json["start_time"],
-                       end_time=request.json["end_time"],
                        contadorArriendo=request.json["contadorArriendo"],
                        user_id=request.json["user_id"],
                        cancha_id=request.json["cancha_id"]
