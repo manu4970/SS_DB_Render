@@ -257,8 +257,8 @@ class Canchas(db.Model):
     name = db.Column(db.String(120), nullable=True)
     is_available = db.Column(db.Boolean, nullable=False)
     sportType = db.Column(db.String, nullable=True)
-    apertura = db.Column(db.DateTime, nullable=True)
-    cierre = db.Column(db.DateTime, nullable=True)
+    apertura = db.Column(db.Integer, nullable=True)
+    cierre = db.Column(db.Integer, nullable=True)
     cantidadCanchas = db.Column(db.Integer, nullable=True)
     detalle = db.Column(db.String, nullable=True)
     precio = db.Column(db.Integer, nullable=True)
@@ -287,10 +287,8 @@ class Canchas(db.Model):
 
 class Rentas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    time = db.Column(db.DateTime, nullable=True)
-    date = db.Column(db.DateTime, nullable=True)
-    start_time = db.Column(db.DateTime, nullable=True)
-    end_time = db.Column(db.DateTime, nullable=True)
+    time = db.Column(db.Integer, nullable=True)
+    date = db.Column(db.String, nullable=True)
     contadorArriendo = db.Column(db.Integer, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     cancha_id = db.Column(db.Integer, db.ForeignKey('canchas.id'), nullable=True)
@@ -300,8 +298,6 @@ class Rentas(db.Model):
             "id": self.id,
             "date": self.date,
             "time": self.time,
-            "start_time": self.start_time,
-            "end_time": self.end_time,
             "cantidad": self.contadorArriendo,
             "user_id": self.user_id,
             "cancha_id": self.cancha_id
