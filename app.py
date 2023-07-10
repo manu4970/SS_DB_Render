@@ -175,8 +175,8 @@ def create_canchas():
                      cantidadCanchas=request.json["cantidadCanchas"],
                      detalle=request.json["detalle"],
                      precio=request.json["precio"],
-                     user_id=request.json["user_id"],
-                     rentas=request.json["rentas"]
+                     user_id=request.json["user_id"]
+                    #  rentas=request.json["rentas"]
                      )
     print(cancha)
     db.session.add(cancha)
@@ -188,9 +188,11 @@ def create_canchas():
 @app.route('/rentas', methods=['POST'])
 def create_rentas():
     newRentas = Rentas(
-                       date=request.json["date"],
                        time=request.json["time"],
-                       cantidad=request.json["cantidad"],
+                       date=request.json["date"],
+                       start_time=request.json["start_time"],
+                       end_time=request.json["end_time"],
+                       contadorArriendo=request.json["contadorArriendo"],
                        user_id=request.json["user_id"],
                        cancha_id=request.json["cancha_id"]
                        )
@@ -205,7 +207,7 @@ def create_rentas():
 def get_rentas():
 
     rentas = Rentas.query.all()
-    return jsonify([rentas.serialize() for renta in rentas]), 200
+    return jsonify([renta.serialize() for renta in rentas]), 200
 
 
 rentas_user = db.Table(
@@ -243,8 +245,8 @@ class User(db.Model):
             "is_admin": self.is_admin,
             "is_renter": self.is_renter,
             "img" : self.img,
-            "rentas": [renta.serialize() for renta in self.rentas],
             "canchas": [cancha.serialize() for cancha in self.canchas],
+            "rentas": [renta.serialize() for renta in self.rentas],
         }
 
 
@@ -259,7 +261,7 @@ class Canchas(db.Model):
     cantidadCanchas = db.Column(db.Integer, nullable=True)
     detalle = db.Column(db.String, nullable=True)
     precio = db.Column(db.Integer, nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     rentas = db.relationship('Rentas', secondary=canchas_rentas, backref='canchas')
 
     def serialize(self):
@@ -273,8 +275,9 @@ class Canchas(db.Model):
             "cantidad": self.cantidadCanchas,
             "detalle": self.detalle,
             "is_available": self.is_available,
+            "precio": self.precio,
             "user_id": self.user_id,
-            "user": self.user.serialize(),
+            "rentas": self.rentas,
             "rentas": [renta.serialize() for renta in self.rentas],
         }
 
@@ -286,8 +289,8 @@ class Rentas(db.Model):
     start_time = db.Column(db.DateTime, nullable=True)
     end_time = db.Column(db.DateTime, nullable=True)
     contadorArriendo = db.Column(db.Integer, nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    cancha_id = db.Column(db.Integer, db.ForeignKey('canchas.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    cancha_id = db.Column(db.Integer, db.ForeignKey('canchas.id'), nullable=True)
 
     def serialize(self):
         return {
@@ -298,9 +301,7 @@ class Rentas(db.Model):
             "end_time": self.end_time,
             "cantidad": self.contadorArriendo,
             "user_id": self.user_id,
-            "cancha_id": self.cancha_id,
-            "user": self.user.serialize(),
-            "cancha": self.cancha.serialize(),
+            "cancha_id": self.cancha_id
         }
 
 if __name__ == '__main__':
