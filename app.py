@@ -185,6 +185,17 @@ def create_canchas():
 
     return jsonify(cancha.serialize()), 200
 
+@app.route('/users/<int:user_id>/canchas', methods=['GET'])
+def get_user_canchas(user_id):
+    user = User.query.get(user_id)
+
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
+
+    canchas = user.canchas
+    canchas_data = [cancha.serialize() for cancha in canchas]
+
+    return jsonify(canchas_data), 200
 
 @app.route('/rentas', methods=['POST'])
 def create_rentas():
