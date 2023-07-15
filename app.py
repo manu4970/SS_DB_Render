@@ -9,7 +9,7 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_ggq2_user:GCwBzPUDd0StxHcQRLjzGKLV2Xu96wRc@dpg-cim8p5dgkuvgvhe8fas0-a.oregon-postgres.render.com/ss_db_render_ggq2"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ss_db_render_4ip3_user:3vBdA3MtgziOeQp5BQYiCVfR91ER37lJ@dpg-ciphd9tgkuvrtodpo6vg-a.oregon-postgres.render.com/ss_db_render_4ip3"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'secret'
 CORS(app)
@@ -268,6 +268,7 @@ class Canchas(db.Model):
     name = db.Column(db.String(120), nullable=True)
     is_available = db.Column(db.Boolean, nullable=False)
     sportType = db.Column(db.String, nullable=True)
+    img = db.Column(db.String(500), nullable=True)
     apertura = db.Column(db.Integer, nullable=True)
     cierre = db.Column(db.Integer, nullable=True)
     cantidadCanchas = db.Column(db.Integer, nullable=True)
@@ -290,6 +291,7 @@ class Canchas(db.Model):
             "detalle": self.detalle,
             "is_available": self.is_available,
             "precio": self.precio,
+            "img": self.img,
             "user_id": self.user_id,
             "rentas": self.rentas,
             "rentas": [renta.serialize() for renta in self.rentas],
