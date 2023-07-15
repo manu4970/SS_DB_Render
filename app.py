@@ -177,6 +177,7 @@ def create_canchas():
                      detalle=request.json["detalle"],
                      precio=request.json["precio"],
                      user_id=request.json["user_id"],
+                     img=request.json["img"],
                     #  rentas=request.json["rentas"]
                      )
     print(cancha)
@@ -196,6 +197,18 @@ def get_user_canchas(user_id):
     canchas_data = [cancha.serialize() for cancha in canchas]
 
     return jsonify(canchas_data), 200
+
+@app.route('/users/<int:user_id>/rentas', methods=['GET'])
+def get_user_rentas(user_id):
+    user = User.query.get(user_id)
+
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
+
+    rentas = user.rentas
+    rentas_data = [rentas.serialize() for renta in rentas]
+
+    return jsonify(rentas_data), 200
 
 @app.route('/rentas', methods=['POST'])
 def create_rentas():
