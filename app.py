@@ -256,7 +256,7 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, nullable=True)
     is_renter = db.Column(db.Boolean, nullable=True)
     canchas = db.relationship('Canchas', backref='user', lazy=True)
-    rentas = db.relationship('Rentas', secondary=rentas_user, backref='user')
+    rentas = db.relationship('Rentas',  backref='user', lazy=True)
 
 
     def serialize(self):
