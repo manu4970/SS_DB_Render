@@ -153,6 +153,43 @@ def get_canchas():
     return jsonify([cancha.serialize() for cancha in canchas]), 200
 
 
+@app.route('/canchas/<string:item_id>', methods=['PUT'])
+def update_cancha(item_id):
+    
+        cancha = Canchas.query.get(item_id)
+        if cancha is None:
+            abort(404)
+    
+        cancha.location = request.json["location"]
+        cancha.region = request.json["region"]
+        cancha.comuna = request.json["comuna"]
+        cancha.name = request.json["name"]
+        cancha.apertura = request.json["apertura"]
+        cancha.cierre = request.json["cierre"]
+        cancha.is_available = request.json["is_available"]
+        cancha.sportType = request.json["sportType"]
+        cancha.cantidadCanchas = request.json["cantidadCanchas"]
+        cancha.detalle = request.json["detalle"]
+        cancha.precio = request.json["precio"]
+        cancha.user_id = request.json["user_id"]
+        cancha.img = request.json["img"]
+        # cancha.rentas = request.json["rentas"]
+    
+        db.session.commit()
+    
+        return jsonify(cancha.serialize()), 200
+
+@app.route('/canchas/<string:item_id>', methods=['DELETE'])
+def delete_cancha(item_id):
+    cancha = Canchas.query.get(item_id)
+    if cancha is None:
+        abort(404)
+
+    db.session.delete(cancha)
+    db.session.commit()
+
+    return jsonify({"success": "Cancha deleted"}), 200
+
 @app.route('/canchas/<string:item_id>', methods=['GET'])
 def get_cancha(item_id):
 
